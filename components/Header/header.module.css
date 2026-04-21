@@ -33,7 +33,7 @@
 
 .franceTravail {
   object-fit: contain;
-  max-width: 120px;
+  max-width: 160px;
   height: auto;
 }
 
@@ -62,7 +62,7 @@
   }
 
   .franceTravail {
-    max-width: 90px;
+    max-width: 120px;
   }
 
   .logo {
@@ -82,6 +82,6 @@
   }
 
   .franceTravail {
-    max-width: 70px;
+    max-width: 90px;
   }
 }
