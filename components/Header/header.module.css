@@ -1,0 +1,32 @@
+.header {
+    width: 100%;
+    display: flex;
+    background-color: white;
+}
+
+.container {
+    display: flex;
+    position: relative;
+    top: 20px;
+    left: 20px;
+    flex-direction: column;
+}
+
+.p {
+    color: black;
+    position: relative;
+    top: 50px;
+}
+
+.franceTravail {
+    position: relative;
+    left: 20px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    /* position: absolute;
+    top: 40px;
+    right: 100px; */
+  }
+}

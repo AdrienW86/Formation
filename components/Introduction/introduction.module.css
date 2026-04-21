@@ -1,0 +1,14 @@
+.introduction {
+    background-color: var(--primary);
+}
+
+.text {
+    padding: 20px;
+    font-size: clamp(1rem, 1.2vw, 2rem);
+    line-height: 1.3rem;
+}
+
+.p {
+    width: 100%;
+    margin-bottom: 20px;
+}
