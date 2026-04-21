@@ -1,0 +1,49 @@
+.intro {
+  position: relative;
+  width: 100%;
+  height: 650px;
+  overflow: hidden;
+  max-width: 1600px;
+  padding-top: 20px;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  margin: auto;
+  
+}
+
+.bannerImage {
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+}
+
+/* .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 2;
+} */
+
+/* Desktop par défaut */
+.desktop {
+  display: block;
+}
+
+.mobile {
+  display: none;
+}
+
+/* <= 800px */
+@media (max-width: 920px) {
+  .intro {
+    height: 520px;
+  }
+
+  .desktop {
+    display: none;
+  }
+
+  .mobile {
+    display: block;
+  }
+}
