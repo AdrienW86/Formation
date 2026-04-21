@@ -78,9 +78,6 @@
 
 /* 📱 VERY SMALL SCREENS */
 @media (max-width: 480px) {
-  .p {
-    display: none; /* option clean */
-  }
 
   .franceTravail {
     max-width: 90px;
