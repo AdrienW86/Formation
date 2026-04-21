@@ -1,27 +1,38 @@
-import Image from "next/image"
-import Hamburger from "../Hamburger/Hamburger"
-import styles from './header.module.css'
+import Image from "next/image";
+import Hamburger from "../Hamburger/Hamburger";
+import styles from "./header.module.css";
 
 export default function Header() {
   return (
     <header className={styles.header}>
+
+      <div className={styles.left}>
         <Image
           className={styles.logo}
           src="/logo.png"
           alt="Formise logo"
-          width={200}
-          height={200}
+          width={160}
+          height={60}
           priority
         />
-        <div className={styles.container}>
-            <p className={styles.p}> en partenariat avec </p>
-            <Image 
-                src="/france-travail.svg" 
-                className={styles.franceTravail}
-                alt="menu" width={180} height={180} 
-            />
-        </div>
+      </div>
+
+      <div className={styles.center}>
+        <p className={styles.p}>En partenariat avec</p>
+
+        <Image
+          src="/france-travail.svg"
+          className={styles.franceTravail}
+          alt="France Travail"
+          width={140}
+          height={50}
+        />
+      </div>
+
+      <div className={styles.right}>
         <Hamburger />
+      </div>
+
     </header>
-  )
+  );
 }

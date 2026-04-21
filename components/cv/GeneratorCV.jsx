@@ -126,6 +126,7 @@ export default function GeneratorCV() {
 
         {/* TEMPLATE */}
         <select
+          className={styles.select}
           value={template}
           onChange={(e) => setTemplate(e.target.value)}
         >

@@ -14,9 +14,9 @@ export default function HamburgerMenu() {
       <div className={styles.hamburger}>
         <nav className={styles.desktopMenu}>
           <Link href="/formations">Nos formations</Link>
+          <Link href="/generateur-cv">Créateur de CV</Link>
           <Link href="/qui-sommes-nous">Qui sommes nous ?</Link>
           <Link href="/contact">Contact</Link>
-          <Link href="/financement">Faire financement</Link>
         </nav>
 
         <button

@@ -31,6 +31,10 @@
   
 }
 
+.select {
+  padding: 8px
+}
+
 .input {
   padding: 8px;
   margin: 5px 5px 5px 0px;
