@@ -23,7 +23,7 @@ export default function Banner() {
                 <a href="#emploi">recherche d’emploi</a>.
             </p>
         </div>
-        <button className={styles.btn}> Faites financer votre formation avec France Travail </button>
+        <button className={styles.btn}> Financement avec France Travail </button>
     </div>
   )
 }

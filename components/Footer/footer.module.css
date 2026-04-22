@@ -2,3 +2,41 @@
     height: 200px;
     background-color: var(--primary);
 }
+
+.logo {
+  object-fit: contain;
+  height: auto;
+  width: auto;
+  max-width: 140px;
+}
+
+/* 📱 MOBILE */
+@media (max-width: 768px) {
+  .header {
+    padding: 10px 12px;
+  }
+
+  .p {
+    font-size: 10px;
+  }
+
+  .franceTravail {
+    max-width: 120px;
+  }
+
+  .logo {
+    max-width: 110px;
+  }
+
+  .center {
+    flex: 1;
+    gap: 2px;
+  }
+}
+
+/* 📱 VERY SMALL SCREENS */
+@media (max-width: 480px) {
+  .franceTravail {
+    max-width: 90px;
+  }
+}

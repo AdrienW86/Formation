@@ -1,14 +1,136 @@
-.introduction {
-    background-color: var(--primary);
+.section {
+  width: 100%;
+  padding: 80px 6%;
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
 }
 
-.text {
+/* HERO */
+.hero {
+  max-width: 900px;
+  margin: 0 auto 70px auto;
+  text-align: center;
+}
+
+.badge {
+  display: inline-block;
+  background: #dbeafe;
+  color: #2563eb;
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.description {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: #4b5563;
+  line-height: 1.7;
+  max-width: 760px;
+  margin: 20px auto 0 auto;
+}
+
+/* CONTENT */
+.content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 35px;
+  align-items: start;
+}
+
+/* LEFT */
+.left {
+  display: grid;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 26px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  transition: 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  color: #111827;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.cardText {
+  color: #6b7280;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+/* RIGHT */
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.infoBox {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+.boxTitle {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  color: #111827;
+  font-weight: 700;
+}
+
+.boxText {
+  color: #6b7280;
+  line-height: 1.7;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list li {
+  margin-bottom: 12px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* TABLET */
+@media (max-width: 992px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .section {
+    padding: 60px 5%;
+  }
+
+  .card,
+  .infoBox {
     padding: 20px;
-    font-size: clamp(1rem, 1.2vw, 2rem);
-    line-height: 1.3rem;
-}
+  }
 
-.p {
-    width: 100%;
-    margin-bottom: 20px;
+  .cardTitle {
+    font-size: 1.1rem;
+  }
+
+  .cardText,
+  .boxText {
+    font-size: 0.97rem;
+  }
 }
