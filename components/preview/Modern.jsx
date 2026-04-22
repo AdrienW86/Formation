@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // Composant de Badge pour les Skills
 const Badge = ({ children }) => (
@@ -14,6 +14,28 @@ const SidebarSection = ({ title, children }) => (
 );
 
 export default function ModernPreview({ form = {} }) {
+  // --- LOGIQUE RESPONSIVE (SCALE) ---
+  const containerRef = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        const parentWidth = containerRef.current.offsetWidth;
+        const cvWidth = 794; // Correspond à 210mm en pixels à 96 DPI
+        if (parentWidth < cvWidth) {
+          setScale(parentWidth / cvWidth);
+        } else {
+          setScale(1);
+        }
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const fallback = {
     prenom: "Alexandre",
     nom: "Martin",
@@ -48,103 +70,104 @@ export default function ModernPreview({ form = {} }) {
   };
 
   return (
-    <div style={styles.wrapper}>
-      <div style={styles.a4}>
-        
-        {/* ================= SIDEBAR (LEFT) ================= */}
-        <div style={styles.left}>
-          <div style={styles.photoContainer}>
-            {form.photo ? (
-              <img src={form.photo} alt="Profile" style={styles.photo} />
-            ) : (
-              <div style={styles.photoPlaceholder}>
-                <span style={{ fontSize: 24 }}>{data.prenom[0]}</span>
-              </div>
-            )}
+    <div ref={containerRef} style={styles.wrapper}>
+      {/* Wrapper de mise à l'échelle */}
+      <div style={{
+        ...styles.scaleWrapper,
+        transform: `scale(${scale})`,
+        marginBottom: scale < 1 ? `-${(1122 * (1 - scale))}px` : '0px' // Compense l'espace vide créé par le scale
+      }}>
+        <div style={styles.a4}>
+          
+          {/* ================= SIDEBAR (LEFT) ================= */}
+          <div style={styles.left}>
+            <div style={styles.photoContainer}>
+              {form.photo ? (
+                <img src={form.photo} alt="Profile" style={styles.photo} />
+              ) : (
+                <div style={styles.photoPlaceholder}>
+                  <span style={{ fontSize: 24 }}>{data.prenom[0]}</span>
+                </div>
+              )}
+            </div>
+
+            <SidebarSection title="CONTACT">
+              <p style={styles.contactItem}>📞 {data.telephone}</p>
+              <p style={styles.contactItem}>✉️ {data.email}</p>
+              <p style={styles.contactItem}>📍 {data.adresse}, {data.codePostal} {data.ville}</p>
+              <p style={styles.contactItem}>🎂 {data.naissance}</p>
+            </SidebarSection>
+
+            <SidebarSection title="LANGUES">
+              {data.langues.map((l, i) => (
+                <p key={i} style={styles.contactItem}>{l}</p>
+              ))}
+            </SidebarSection>
+
+            <SidebarSection title="PERMIS">
+              {data.permis.map((p, i) => (
+                <p key={i} style={styles.contactItem}>{p}</p>
+              ))}
+            </SidebarSection>
           </div>
 
-          <SidebarSection title="CONTACT">
-            <p style={styles.contactItem}>📞 {data.telephone}</p>
-            <p style={styles.contactItem}>✉️ {data.email}</p>
-            <p style={styles.contactItem}>📍 {data.adresse}, {data.codePostal} {data.ville}</p>
-            <p style={styles.contactItem}>🎂 {data.naissance}</p>
-          </SidebarSection>
+          {/* ================= MAIN CONTENT (RIGHT) ================= */}
+          <div style={styles.right}>
+            <header style={styles.header}>
+              <h1 style={styles.name}>
+                {data.prenom.toUpperCase()} <span style={{ color: '#2563eb' }}>{data.nom.toUpperCase()}</span>
+              </h1>
+              <p style={styles.mainPoste}>{data.poste}</p>
+              <div style={styles.separator}></div>
+            </header>
 
-          <SidebarSection title="LANGUES">
-            {data.langues.map((l, i) => (
-              <p key={i} style={styles.contactItem}>{l}</p>
-            ))}
-          </SidebarSection>
+            <section style={styles.section}>
+              <h2 style={styles.sectionTitle}>Profil Personnel</h2>
+              <p style={styles.bioText}>{data.bio}</p>
+            </section>
 
-          <SidebarSection title="PERMIS">
-            {data.permis.map((p, i) => (
-              <p key={i} style={styles.contactItem}>{p}</p>
-            ))}
-          </SidebarSection>
-        </div>
-
-        {/* ================= MAIN CONTENT (RIGHT) ================= */}
-        <div style={styles.right}>
-          {/* HEADER */}
-          <header style={styles.header}>
-            <h1 style={styles.name}>
-              {data.prenom.toUpperCase()} <span style={{ color: '#2563eb' }}>{data.nom.toUpperCase()}</span>
-            </h1>
-            <p style={styles.mainPoste}>{data.poste}</p>
-            <div style={styles.separator}></div>
-          </header>
-
-          {/* PROFIL */}
-          <section style={styles.section}>
-            <h2 style={styles.sectionTitle}>Profil Personnel</h2>
-            <p style={styles.bioText}>{data.bio}</p>
-          </section>
-
-          {/* EXPERIENCES */}
-          <section style={styles.section}>
-            <h2 style={styles.sectionTitle}>Expériences Professionnelles</h2>
-            {data.experiences.map((exp) => (
-              <div key={exp.id} style={styles.timelineItem}>
-                <div style={styles.timelineDot}></div>
-                <div style={styles.expHeader}>
-                  <strong style={styles.expPoste}>{exp.poste}</strong>
-                  <span style={styles.expDate}>{exp.start} — {exp.end}</span>
+            <section style={styles.section}>
+              <h2 style={styles.sectionTitle}>Expériences Professionnelles</h2>
+              {data.experiences.map((exp) => (
+                <div key={exp.id} style={styles.timelineItem}>
+                  <div style={styles.timelineDot}></div>
+                  <div style={styles.expHeader}>
+                    <strong style={styles.expPoste}>{exp.poste}</strong>
+                    <span style={styles.expDate}>{exp.start} — {exp.end}</span>
+                  </div>
+                  <p style={styles.expEntreprise}>{exp.entreprise}</p>
+                  {exp.desc && <p style={styles.expDesc}>{exp.desc}</p>}
                 </div>
-                <p style={styles.expEntreprise}>{exp.entreprise}</p>
-                {exp.desc && <p style={styles.expDesc}>{exp.desc}</p>}
-              </div>
-            ))}
-          </section>
+              ))}
+            </section>
 
-          {/* FORMATION */}
-          <section style={styles.section}>
-            <h2 style={styles.sectionTitle}>Formation</h2>
-            {data.diplomes.map((d, i) => (
-              <div key={i} style={styles.educationItem}>
-                <strong>{d.titre}</strong>
-                <p style={styles.expEntreprise}>{d.ecole} | {d.annee}</p>
-              </div>
-            ))}
-          </section>
+            <section style={styles.section}>
+              <h2 style={styles.sectionTitle}>Formation</h2>
+              {data.diplomes.map((d, i) => (
+                <div key={i} style={styles.educationItem}>
+                  <strong>{d.titre}</strong>
+                  <p style={styles.expEntreprise}>{d.ecole} | {d.annee}</p>
+                </div>
+              ))}
+            </section>
 
-          {/* SKILLS */}
-          <section style={styles.section}>
-            <h2 style={styles.sectionTitle}>Compétences</h2>
-            <div style={{ marginBottom: 15 }}>
-              <h4 style={styles.subSkillTitle}>Expertises Techniques</h4>
-              <div style={styles.badgeContainer}>
-                {data.hardSkills.map((s, i) => <Badge key={i}>{s}</Badge>)}
+            <section style={styles.section}>
+              <h2 style={styles.sectionTitle}>Compétences</h2>
+              <div style={{ marginBottom: 15 }}>
+                <h4 style={styles.subSkillTitle}>Expertises Techniques</h4>
+                <div style={styles.badgeContainer}>
+                  {data.hardSkills.map((s, i) => <Badge key={i}>{s}</Badge>)}
+                </div>
               </div>
-            </div>
-            <div>
-              <h4 style={styles.subSkillTitle}>Soft Skills</h4>
-              <div style={styles.badgeContainer}>
-                {data.softSkills.map((s, i) => <Badge key={i}>{s}</Badge>)}
+              <div>
+                <h4 style={styles.subSkillTitle}>Soft Skills</h4>
+                <div style={styles.badgeContainer}>
+                  {data.softSkills.map((s, i) => <Badge key={i}>{s}</Badge>)}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
-
       </div>
     </div>
   );
@@ -153,12 +176,17 @@ export default function ModernPreview({ form = {} }) {
 const styles = {
   wrapper: {
     width: "100%",
-    minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    overflow: "hidden", // Empêche le scroll horizontal
     background: "#e2e8f0",
-    padding: "40px 0",
+    padding: "20px 0",
+  },
+  scaleWrapper: {
+    transformOrigin: "top center",
+    width: "210mm",
+    height: "297mm",
+    transition: "transform 0.2s ease-out",
   },
   a4: {
     width: "210mm",
@@ -169,10 +197,10 @@ const styles = {
     fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     color: "#1e293b",
   },
-  /* Left Column */
+  /* --- Le reste de tes styles CSS reste identique --- */
   left: {
     width: "32%",
-    background: "#1e293b", // Slate 800 (plus moderne que le bleu pur)
+    background: "#1e293b",
     color: "#f8fafc",
     padding: "40px 25px",
     display: "flex",
@@ -187,7 +215,7 @@ const styles = {
   photo: {
     width: 120,
     height: 120,
-    borderRadius: "20%", // Carré arrondi pour un look moderne
+    borderRadius: "20%",
     border: "4px solid rgba(255,255,255,0.1)",
     objectFit: "cover",
   },
@@ -221,7 +249,6 @@ const styles = {
     marginBottom: 8,
     opacity: 0.9,
   },
-  /* Right Column */
   right: {
     width: "68%",
     padding: "50px 45px",
@@ -268,7 +295,6 @@ const styles = {
     color: "#475569",
     textAlign: "justify",
   },
-  /* Timeline Style for Exp */
   timelineItem: {
     position: "relative",
     paddingLeft: 20,
@@ -315,7 +341,6 @@ const styles = {
   educationItem: {
     marginBottom: 15,
   },
-  /* Skills Badges */
   subSkillTitle: {
     fontSize: 12,
     color: "#94a3b8",
