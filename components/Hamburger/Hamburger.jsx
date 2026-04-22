@@ -40,7 +40,7 @@ export default function HamburgerMenu() {
       <nav className={`${styles.mobileMenu} ${open ? styles.show : ""}`}>
         <Link href="/formations" onClick={closeMenu}>Nos formations</Link>
         <Link href="/generateur-cv" onClick={closeMenu}>Créateur de CV</Link>
-        <Link href="/qui-sommes-nous" onClick={closeMenu}>Qui sommes nous ?</Link>
+        <Link href="/about" onClick={closeMenu}>Qui sommes nous ?</Link>
         <Link href="/contact" onClick={closeMenu}>Contact</Link>       
       </nav>
     </>
