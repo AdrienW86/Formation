@@ -9,6 +9,7 @@ import styles from "./generator.module.css";
 
 export default function GeneratorCV() {
   const [template, setTemplate] = useState("modern");
+  const [isAiLoading, setIsAiLoading] = useState(false); // État pour l'IA
 
   const [form, setForm] = useState({
     prenom: "",
@@ -27,24 +28,55 @@ export default function GeneratorCV() {
     softSkills: [],
     langues: [],
     permis: [],
-    hobbies: [], // Pour les tags
+    hobbies: [],
     projets: [],
   });
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState("experience");
 
-  // States pour les inputs de tags
   const [hardSkillInput, setHardSkillInput] = useState("");
   const [softSkillInput, setSoftSkillInput] = useState("");
   const [hobbyInput, setHobbyInput] = useState("");
 
-  // Forms temporaires pour les modales
   const [expForm, setExpForm] = useState({ poste: "", entreprise: "", start: "", end: "", desc: "" });
   const [eduForm, setEduForm] = useState({ titre: "", ecole: "", annee: "" });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // --- LOGIQUE AGENT IA ---
+  const handleAiImprove = async () => {
+    if (!form.poste) {
+      alert("S'il vous plaît, indiquez d'abord votre 'Poste' dans la section Identité pour guider l'IA.");
+      return;
+    }
+
+    setIsAiLoading(true);
+    try {
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          poste: form.poste,
+          skills: form.hardSkills,
+          bio: form.bio,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.suggestion) {
+        setForm({ ...form, bio: data.suggestion });
+      } else {
+        alert("L'IA n'a pas pu générer de réponse. Vérifiez votre clé API.");
+      }
+    } catch (err) {
+      console.error("Erreur IA:", err);
+      alert("Une erreur est survenue lors de l'appel à l'IA.");
+    } finally {
+      setIsAiLoading(false);
+    }
   };
 
   const handlePhoto = (e) => {
@@ -55,7 +87,6 @@ export default function GeneratorCV() {
     reader.readAsDataURL(file);
   };
 
-  // --- LOGIQUE D'AJOUT ---
   const addItem = (field, item, setItemForm, initialForm) => {
     setForm({ ...form, [field]: [...form[field], { ...item, id: Date.now().toString() }] });
     setItemForm(initialForm);
@@ -95,7 +126,6 @@ export default function GeneratorCV() {
       <div className={styles.generator}>
         <h2 className={styles.h2}>Générateur de CV</h2>
 
-        {/* CHOIX DU TEMPLATE */}
         <select className={styles.select} value={template} onChange={(e) => setTemplate(e.target.value)}>
           <option value="modern">Moderne / Tech</option>
           <option value="corporate">Executive Corporate</option>
@@ -115,12 +145,28 @@ export default function GeneratorCV() {
           </div>
         </div>
 
-        {/* PHOTO & BIO */}
-        <h3 className={styles.h3}>Photo & Profil</h3>
-        <input type="file" accept="image/*" onChange={handlePhoto} className={styles.input} />
-        <textarea className={styles.textarea} name="bio" placeholder="Votre accroche..." onChange={handleChange} />
+        {/* PHOTO & BIO + AGENT IA */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
+          <h3 className={styles.h3} style={{ margin: 0 }}>Photo & Profil</h3>
+          <button 
+            onClick={handleAiImprove} 
+            disabled={isAiLoading}
+            className={styles.aiButton}
+          >
+            {isAiLoading ? "🪄 Rédaction..." : "🪄 Améliorer la bio (IA)"}
+          </button>
+        </div>
+        
+        <input type="file" accept="image/*" onChange={handlePhoto} className={styles.input} style={{ marginTop: "10px" }} />
+        <textarea 
+          className={styles.textarea} 
+          name="bio" 
+          value={form.bio} // Ajout du value pour que l'IA puisse mettre à jour le texte
+          placeholder="Votre accroche ou profil personnel..." 
+          onChange={handleChange} 
+        />
 
-        {/* FORMATIONS (DIPLOMES) */}
+        {/* FORMATIONS */}
         <h3 className={styles.h3}>Diplômes & Formations</h3>
         <button onClick={() => { setModalType("education"); setModalOpen(true); }}>+ Ajouter un diplôme</button>
         <div className={styles.listPreview}>
@@ -144,7 +190,7 @@ export default function GeneratorCV() {
           ))}
         </div>
 
-        {/* SKILLS (Tags) */}
+        {/* SKILLS */}
         <h3 className={styles.h3}>Expertises & Qualités</h3>
         <div className={styles.tagSection}>
           <input 
@@ -159,8 +205,8 @@ export default function GeneratorCV() {
           </div>
         </div>
 
-        {/* HOBBIES (Tags) */}
-        <h3 className={styles.h3}>Loisirs & Centres d'intérêt</h3>
+        {/* HOBBIES */}
+        <h3 className={styles.h3}>Loisirs</h3>
         <div className={styles.tagSection}>
           <input 
             className={styles.input} 

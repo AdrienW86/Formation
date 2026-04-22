@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const SectionTitle = ({ children }) => (
   <h2 style={styles.sectionTitle}>{children}</h2>
 );
 
 export default function CorporateExecutivePreview({ form = {} }) {
+  // --- LOGIQUE RESPONSIVE (SCALE) ---
+  const containerRef = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        const parentWidth = containerRef.current.offsetWidth;
+        const cvWidth = 794; // Largeur A4 en pixels (approx 210mm)
+        if (parentWidth < cvWidth) {
+          setScale(parentWidth / cvWidth);
+        } else {
+          setScale(1);
+        }
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const fallback = {
     prenom: "Jean-Baptiste",
     nom: "De La Roche",
@@ -32,106 +54,110 @@ export default function CorporateExecutivePreview({ form = {} }) {
   const data = { ...fallback, ...form };
 
   return (
-    <div style={styles.wrapper}>
-      <div style={styles.a4}>
-        
-        {/* BARRE DÉCORATIVE SUPÉRIEURE */}
-        <div style={styles.topBar}></div>
+    <div ref={containerRef} style={styles.wrapper}>
+      {/* Wrapper de mise à l'échelle pour le responsive */}
+      <div style={{
+        ...styles.scaleWrapper,
+        transform: `scale(${scale})`,
+        marginBottom: scale < 1 ? `-${(1122 * (1 - scale))}px` : '0px' 
+      }}>
+        <div style={styles.a4}>
+          
+          <div style={styles.topBar}></div>
 
-        <header style={styles.header}>
-          <div style={styles.headerInfo}>
-            <h1 style={styles.name}>
-              {data.prenom} <span style={{ fontWeight: 800 }}>{data.nom.toUpperCase()}</span>
-            </h1>
-            <div style={styles.posteBadge}>{data.poste.toUpperCase()}</div>
-            <div style={styles.contactGrid}>
-              <span><strong>T.</strong> {data.telephone}</span>
-              <span><strong>E.</strong> {data.email}</span>
-              <span><strong>L.</strong> {data.linkedin}</span>
-              <span><strong>A.</strong> {data.adresse}</span>
+          <header style={styles.header}>
+            <div style={styles.headerInfo}>
+              <h1 style={styles.name}>
+                {data.prenom} <span style={{ fontWeight: 800 }}>{data.nom.toUpperCase()}</span>
+              </h1>
+              <div style={styles.posteBadge}>{data.poste.toUpperCase()}</div>
+              <div style={styles.contactGrid}>
+                <span><strong>T.</strong> {data.telephone}</span>
+                <span><strong>E.</strong> {data.email}</span>
+                <span><strong>L.</strong> {data.linkedin}</span>
+                <span><strong>A.</strong> {data.adresse}</span>
+              </div>
+            </div>
+            
+            <div style={styles.photoWrapper}>
+              {data.photo ? (
+                <img src={data.photo} alt="Portrait" style={styles.photo} />
+              ) : (
+                <div style={styles.photoPlaceholder}>PHOTO</div>
+              )}
+            </div>
+          </header>
+
+          <div style={styles.content}>
+            <div style={styles.leftCol}>
+              <section style={styles.section}>
+                <SectionTitle>Profil Exécutif</SectionTitle>
+                <p style={styles.bioText}>{data.bio}</p>
+              </section>
+
+              <section style={styles.section}>
+                <SectionTitle>Parcours Professionnel</SectionTitle>
+                {data.experiences.map((exp) => (
+                  <div key={exp.id} style={styles.expBlock}>
+                    <div style={styles.expHeader}>
+                      <span style={styles.expPoste}>{exp.poste}</span>
+                      <span style={styles.expDate}>{exp.start} — {exp.end}</span>
+                    </div>
+                    <div style={styles.expEntreprise}>{exp.entreprise.toUpperCase()}</div>
+                    <p style={styles.expDesc}>{exp.desc}</p>
+                  </div>
+                ))}
+              </section>
+
+              <section style={styles.section}>
+                <SectionTitle>Cursus Académique</SectionTitle>
+                {data.diplomes.map((d, i) => (
+                  <div key={i} style={styles.eduBlock}>
+                    <div style={styles.expHeader}>
+                      <span style={styles.expPoste}>{d.titre}</span>
+                      <span style={styles.expDate}>{d.annee}</span>
+                    </div>
+                    <div style={styles.expEntreprise}>{d.ecole}</div>
+                  </div>
+                ))}
+              </section>
+            </div>
+
+            <div style={styles.rightCol}>
+              <section style={styles.sideSection}>
+                <h3 style={styles.sideTitle}>Expertises Clés</h3>
+                <ul style={styles.skillList}>
+                  {data.hardSkills.map((s, i) => <li key={i} style={styles.skillItem}>{s}</li>)}
+                </ul>
+              </section>
+
+              <section style={styles.sideSection}>
+                <h3 style={styles.sideTitle}>Soft Skills</h3>
+                <ul style={styles.skillList}>
+                  {data.softSkills.map((s, i) => <li key={i} style={styles.skillItem}>{s}</li>)}
+                </ul>
+              </section>
+
+              <section style={styles.sideSection}>
+                <h3 style={styles.sideTitle}>Langues</h3>
+                {data.langues.map((l, i) => (
+                  <div key={i} style={styles.sideText}>• {l}</div>
+                ))}
+              </section>
+
+              <section style={styles.sideSection}>
+                <h3 style={styles.sideTitle}>Centres d'Intérêt</h3>
+                {data.hobbies.map((h, i) => (
+                  <div key={i} style={styles.sideText}>• {h}</div>
+                ))}
+              </section>
             </div>
           </div>
-          
-          <div style={styles.photoWrapper}>
-            {data.photo ? (
-              <img src={data.photo} alt="Portrait" style={styles.photo} />
-            ) : (
-              <div style={styles.photoPlaceholder}>PHOTO</div>
-            )}
-          </div>
-        </header>
 
-        <div style={styles.content}>
-          {/* COLONNE GAUCHE (Plus large) */}
-          <div style={styles.leftCol}>
-            <section style={styles.section}>
-              <SectionTitle>Profil Exécutif</SectionTitle>
-              <p style={styles.bioText}>{data.bio}</p>
-            </section>
-
-            <section style={styles.section}>
-              <SectionTitle>Parcours Professionnel</SectionTitle>
-              {data.experiences.map((exp) => (
-                <div key={exp.id} style={styles.expBlock}>
-                  <div style={styles.expHeader}>
-                    <span style={styles.expPoste}>{exp.poste}</span>
-                    <span style={styles.expDate}>{exp.start} — {exp.end}</span>
-                  </div>
-                  <div style={styles.expEntreprise}>{exp.entreprise.toUpperCase()}</div>
-                  <p style={styles.expDesc}>{exp.desc}</p>
-                </div>
-              ))}
-            </section>
-
-            <section style={styles.section}>
-              <SectionTitle>Cursus Académique</SectionTitle>
-              {data.diplomes.map((d, i) => (
-                <div key={i} style={styles.eduBlock}>
-                  <div style={styles.expHeader}>
-                    <span style={styles.expPoste}>{d.titre}</span>
-                    <span style={styles.expDate}>{d.annee}</span>
-                  </div>
-                  <div style={styles.expEntreprise}>{d.ecole}</div>
-                </div>
-              ))}
-            </section>
-          </div>
-
-          {/* COLONNE DROITE (Expertise) */}
-          <div style={styles.rightCol}>
-            <section style={styles.sideSection}>
-              <h3 style={styles.sideTitle}>Expertises Clés</h3>
-              <ul style={styles.skillList}>
-                {data.hardSkills.map((s, i) => <li key={i} style={styles.skillItem}>{s}</li>)}
-              </ul>
-            </section>
-
-            <section style={styles.sideSection}>
-              <h3 style={styles.sideTitle}>Soft Skills</h3>
-              <ul style={styles.skillList}>
-                {data.softSkills.map((s, i) => <li key={i} style={styles.skillItem}>{s}</li>)}
-              </ul>
-            </section>
-
-            <section style={styles.sideSection}>
-              <h3 style={styles.sideTitle}>Langues</h3>
-              {data.langues.map((l, i) => (
-                <div key={i} style={styles.sideText}>• {l}</div>
-              ))}
-            </section>
-
-            <section style={styles.sideSection}>
-              <h3 style={styles.sideTitle}>Centres d'Intérêt</h3>
-              {data.hobbies.map((h, i) => (
-                <div key={i} style={styles.sideText}>• {h}</div>
-              ))}
-            </section>
-          </div>
+          <footer style={styles.footer}>
+            <div style={styles.footerNote}>Document strictement confidentiel - {new Date().getFullYear()}</div>
+          </footer>
         </div>
-
-        <footer style={styles.footer}>
-          <div style={styles.footerNote}>Document strictement confidentiel - {new Date().getFullYear()}</div>
-        </footer>
       </div>
     </div>
   );
@@ -140,11 +166,17 @@ export default function CorporateExecutivePreview({ form = {} }) {
 const styles = {
   wrapper: {
     width: "100%",
-    minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
-    background: "#37474f", // Fond sombre pour faire ressortir le CV
-    padding: "40px 0",
+    overflow: "hidden", 
+    background: "#37474f",
+    padding: "20px 0",
+  },
+  scaleWrapper: {
+    transformOrigin: "top center",
+    width: "210mm",
+    height: "297mm",
+    transition: "transform 0.2s ease-out",
   },
   a4: {
     width: "210mm",
@@ -153,7 +185,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     boxShadow: "0 25px 50px rgba(0,0,0,0.5)",
-    fontFamily: "'Playfair Display', serif", // Si disponible, sinon Times
+    fontFamily: "serif", 
     color: "#1a1a1a",
     position: "relative",
   },

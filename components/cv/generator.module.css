@@ -107,3 +107,24 @@
   justify-content: space-between;
   margin-top: 10px;
 }
+
+.aiButton {
+  background: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.aiButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.aiButton:hover:not(:disabled) {
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
