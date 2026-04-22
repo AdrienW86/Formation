@@ -7,7 +7,7 @@ export default function Background(props) {
 
       {/* Mobile */}
       <Image
-        src="/background-mobile.png"
+        src="/background-formation.png"
         alt="Formation digitale Formise mobile"
         fill
         priority
@@ -15,15 +15,15 @@ export default function Background(props) {
         className={`${styles.bannerImage} ${styles.mobile}`}
       />
       <div className={styles.txt}>
-        <h1> Créez le <span className={styles.span}>CV <br/></span> qui vous démarque</h1>
+        <h1> Trouvez la <span className={styles.span}>formation <br/></span> qui fera décoller votre activité</h1>
         <p className={styles.p}> 
-            Un CV professionnel en quelques minutes. <br></br>
-            Mettez toutes les chances de votre côté.
+            Des formations adaptés à votre projet. <br></br>
+            Des outils pour les entrepreneurs et les demandeurs d'emploi.
         </p>
       </div>
       {/* Desktop */}
       <Image
-        src="/background-desktop.png"
+        src="/background-formation.png"
         alt="Formation digitale Formise desktop"
         fill
         priority

@@ -122,7 +122,7 @@ export default function GeneratorCV() {
     <div className={styles.container}>
       {/* ================= LEFT ================= */}
       <div className={styles.generator}>
-        <h2 className={styles.h2}>Créateur de CV</h2>
+        <h2 className={styles.h2}>Choisissez un modèle</h2>
 
         {/* TEMPLATE */}
         <select
