@@ -15,47 +15,45 @@ export async function POST(req) {
         messages: [
           {
             role: "system",
-            content: `Tu es un expert en rédaction de CV. 
-            Règle CRITIQUE : Réponds UNIQUEMENT avec le texte final de la bio. 
-            INTERDICTION de faire des introductions (ex: "Voici une bio..."), des conclusions ou d'utiliser des guillemets. 
-            Ta réponse doit être prête à être copiée-collée directement. 
-            Ton style est percutant, professionnel et utilise des verbes d'action. 
-            Langue : Français.`
+            content: `Tu es un rédacteur professionnel de profils de CV. 
+            TACHE : Rédiger uniquement une courte introduction (Accroche).
+            
+            CONTRAINTES STRICTES :
+            - Longueur : Maximum 250 caractères (environ 2-3 phrases).
+            - PAS de dates (ex: pas de "2018-2019").
+            - PAS de listes d'expériences passées.
+            - PAS de symboles spéciaux, puces (•) ou astérisques (*).
+            - PAS d'introduction du type "Voici votre bio".
+            - Réponds par le texte brut, prêt à être inséré.
+            
+            STYLE : Direct, professionnel, utilisant le "Je" ou des phrases nominales.`
           },
           {
             role: "user",
-            content: `Rédige la bio pour un poste de ${poste}. 
-            Compétences à inclure : ${skills?.join(', ') || 'générales'}. 
-            Bio actuelle comme base : ${bio || 'Rédige une bio complète'}.`
+            content: `Métier cible : ${poste}. 
+            Mots-clés à intégrer : ${skills?.join(', ') || ''}. 
+            Contexte actuel : ${bio}`
           }
         ],
-        temperature: 0.6, // Légèrement baissée pour plus de précision et moins de "bavardage"
+        temperature: 0.4, // Plus bas pour éviter les divagations
+        max_tokens: 100,  // Limite physique de la réponse pour éviter les longs textes
       }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Erreur API Groq:", data);
-      return NextResponse.json({ error: data.error?.message || "Erreur API" }, { status: response.status });
+      return NextResponse.json({ error: "Erreur API" }, { status: response.status });
     }
 
-    if (data.choices && data.choices[0]?.message?.content) {
-      let cleanedSuggestion = data.choices[0].message.content;
+    let cleanedSuggestion = data.choices[0].message.content;
 
-      // NETTOYAGE : Supprime les guillemets au début et à la fin si l'IA en a mis
-      cleanedSuggestion = cleanedSuggestion.replace(/^["'«]|["'»]$/g, '').trim();
-      
-      // Suppression de phrases d'intro résiduelles au cas où
-      cleanedSuggestion = cleanedSuggestion.replace(/^(Voici|Rdaction|Bio|Profil).*:\s*/i, '');
+    // Nettoyage final des résidus de mise en forme (guillemets, étoiles)
+    cleanedSuggestion = cleanedSuggestion.replace(/[*"'«»]/g, '').trim();
 
-      return NextResponse.json({ suggestion: cleanedSuggestion });
-    } else {
-      throw new Error("Format de réponse inattendu");
-    }
+    return NextResponse.json({ suggestion: cleanedSuggestion });
 
   } catch (error) {
-    console.error("Erreur Serveur:", error);
-    return NextResponse.json({ error: "Le serveur a rencontré un problème." }, { status: 500 });
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
