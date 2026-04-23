@@ -148,16 +148,11 @@ export default function GeneratorCV() {
         {/* PHOTO & BIO + AGENT IA */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px" }}>
           <h3 className={styles.h3} style={{ margin: 0 }}>Photo & Profil</h3>
-          <button 
-            onClick={handleAiImprove} 
-            disabled={isAiLoading}
-            className={styles.aiButton}
-          >
-            {isAiLoading ? "🪄 Rédaction..." : "🪄 Améliorer la bio (IA)"}
-          </button>
         </div>
         
-        <input type="file" accept="image/*" onChange={handlePhoto} className={styles.input} style={{ marginTop: "10px" }} />
+        
+      <input className={styles.addForm} type="file" accept="image/*" onChange={handlePhoto} style={{ marginTop: "10px" }} />
+       <h3 className={styles.h3}> Description</h3>
         <textarea 
           className={styles.textarea} 
           name="bio" 
@@ -165,10 +160,17 @@ export default function GeneratorCV() {
           placeholder="Votre accroche ou profil personnel..." 
           onChange={handleChange} 
         />
+         <button 
+            onClick={handleAiImprove} 
+            disabled={isAiLoading}
+            className={styles.aiButton}
+          >
+            {isAiLoading ? "🪄 Rédaction..." : "🪄 Améliorer la bio (IA)"}
+          </button>
 
         {/* FORMATIONS */}
         <h3 className={styles.h3}>Diplômes & Formations</h3>
-        <button onClick={() => { setModalType("education"); setModalOpen(true); }}>+ Ajouter un diplôme</button>
+        <button className={styles.addForm}onClick={() => { setModalType("education"); setModalOpen(true); }}>+ Ajouter un diplôme</button>
         <div className={styles.listPreview}>
           {form.diplomes.map((edu) => (
             <div key={edu.id} className={styles.expCard}>
@@ -180,7 +182,7 @@ export default function GeneratorCV() {
 
         {/* EXPERIENCES */}
         <h3 className={styles.h3}>Expériences</h3>
-        <button onClick={() => { setModalType("experience"); setModalOpen(true); }}>+ Ajouter une expérience</button>
+        <button className={styles.addForm} onClick={() => { setModalType("experience"); setModalOpen(true); }}>+ Ajouter une expérience</button>
         <div className={styles.listPreview}>
           {form.experiences.map((exp) => (
             <div key={exp.id} className={styles.expCard}>
@@ -233,23 +235,23 @@ export default function GeneratorCV() {
           <div className={styles.modal}>
             {modalType === "experience" ? (
               <>
-                <h3>Expérience</h3>
-                <input placeholder="Poste" onChange={e => setExpForm({...expForm, poste: e.target.value})} />
-                <input placeholder="Entreprise" onChange={e => setExpForm({...expForm, entreprise: e.target.value})} />
+                <h3 className={styles.modalTitle}>Expérience</h3>
+                <input className={styles.inputModal} placeholder="Poste" onChange={e => setExpForm({...expForm, poste: e.target.value})} />
+                <input className={styles.inputModal} placeholder="Entreprise" onChange={e => setExpForm({...expForm, entreprise: e.target.value})} />
                 <div className={styles.dateRow}>
-                  <div className={styles.dateBlock}><label>Début</label><input type="date" onChange={e => setExpForm({...expForm, start: e.target.value})} /></div>
-                  <div className={styles.dateBlock}><label>Fin</label><input type="date" onChange={e => setExpForm({...expForm, end: e.target.value})} /></div>
+                  <div className={styles.dateBlock}><label className={styles.label}>Début</label><input className={styles.inputModal} type="date" onChange={e => setExpForm({...expForm, start: e.target.value})} /></div>
+                  <div className={styles.dateBlock}><label className={styles.label}>Fin</label><input className={styles.inputModal} type="date" onChange={e => setExpForm({...expForm, end: e.target.value})} /></div>
                 </div>
-                <textarea placeholder="Description..." onChange={e => setExpForm({...expForm, desc: e.target.value})} />
-                <button onClick={() => addItem("experiences", expForm, setExpForm, {poste:"", entreprise:"", start:"", end:"", desc:""})}>Ajouter</button>
+                <textarea className={styles.textArea} placeholder="Description..." onChange={e => setExpForm({...expForm, desc: e.target.value})} />
+                <button className={styles.addBtn} onClick={() => addItem("experiences", expForm, setExpForm, {poste:"", entreprise:"", start:"", end:"", desc:""})}>Ajouter</button>
               </>
             ) : (
               <>
-                <h3>Diplôme / Formation</h3>
-                <input placeholder="Intitulé du diplôme" onChange={e => setEduForm({...eduForm, titre: e.target.value})} />
-                <input placeholder="École / Université" onChange={e => setEduForm({...eduForm, ecole: e.target.value})} />
-                <input type="number" placeholder="Année d'obtention" onChange={e => setEduForm({...eduForm, annee: e.target.value})} />
-                <button onClick={() => addItem("diplomes", eduForm, setEduForm, {titre:"", ecole:"", annee:""})}>Ajouter</button>
+                <h3 className={styles.modalTitle}>Diplôme / Formation</h3>
+                <input className={styles.inputModal} placeholder="Intitulé du diplôme" onChange={e => setEduForm({...eduForm, titre: e.target.value})} />
+                <input className={styles.inputModal} placeholder="École / Université" onChange={e => setEduForm({...eduForm, ecole: e.target.value})} />
+                <input className={styles.inputModal} type="number" placeholder="Année d'obtention" onChange={e => setEduForm({...eduForm, annee: e.target.value})} />
+                <button className={styles.addBtn} onClick={() => addItem("diplomes", eduForm, setEduForm, {titre:"", ecole:"", annee:""})}>Ajouter</button>
               </>
             )}
             <button className={styles.closeBtn} onClick={() => setModalOpen(false)}>Fermer</button>

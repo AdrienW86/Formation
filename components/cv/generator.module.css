@@ -43,7 +43,12 @@
 
 .textarea {
   padding: 8px;
-  width: 250px;
+  width: 80%;
+  height: 150px;
+  display: block;
+  margin-bottom: 10px;
+  color: black;
+  background-color: white;;
 }
 
 .preview {
@@ -123,4 +128,52 @@
 
 .aiButton:hover:not(:disabled) {
   box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+.modalTitle {
+  color: var(--primary);
+  margin-bottom: 10px;;
+}
+
+.inputModal {
+  padding: 4px;
+}
+
+.label {
+  color: var(--primary);
+  width: 150px;
+  display: block;
+  margin: 8px 0;
+}
+
+.addBtn {
+  width: 200px;
+  padding: 8px;
+  margin: 10px auto;
+  font-weight: bold;
+  color: var(--primary);
+  background-color: white;
+  border : 1px solid var(--primary);
+}
+
+.closeBtn {
+  width: 200px;
+  padding: 8px;
+  margin: auto;
+  font-weight: bold;
+  background-color: var(--primary)
+}
+
+.addForm ,.downloadBtn {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  color: var(--primary);
+  background-color: white;
+}
+
+.downloadBtn {
+  margin: 30px auto;
+  width: 150px;
 }
