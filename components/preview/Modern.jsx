@@ -1,30 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// Composant de Badge pour les Skills
+// Composant de Badge
 const Badge = ({ children }) => (
   <span style={styles.badge}>{children}</span>
 );
 
-// Composant de Section pour la colonne de gauche
-const SidebarSection = ({ title, children }) => (
+const SidebarSection = ({ title, children, titleColor }) => (
   <div style={styles.sidebarSection}>
-    <h3 style={styles.sidebarTitle}>{title}</h3>
+    <h3 style={{ ...styles.sidebarTitle, color: titleColor }}>{title}</h3>
     <div style={styles.sidebarContent}>{children}</div>
   </div>
 );
 
-export default function ModernPreview({ form = {} }) {
-  // --- LOGIQUE RESPONSIVE (SCALE) ---
+export default function ModernPreview({ form = {}, colors = {} }) {
   const containerRef = useRef(null);
   const [scale, setScale] = useState(1);
+
+  // Valeurs par défaut si l'objet colors n'est pas encore défini
+  const theme = {
+    background: colors.background || "#ffffff",
+    sidebar: colors.sidebar || "#0f172a",
+    textPrimary: colors.textPrimary || "#000000",
+    textSecondary: colors.textSecondary || "#475569"
+  };
 
   useEffect(() => {
     const handleResize = () => {
       if (containerRef.current) {
         const parentWidth = containerRef.current.offsetWidth;
-        const cvWidth = 794; // Correspond à 210mm en pixels à 96 DPI
+        const cvWidth = 794; 
         if (parentWidth < cvWidth) {
-          setScale(parentWidth / cvWidth);
+          setScale(parentWidth / cvWidth - 0.02);
         } else {
           setScale(1);
         }
@@ -36,134 +42,123 @@ export default function ModernPreview({ form = {} }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const fallback = {
-    prenom: "Alexandre",
-    nom: "Martin",
-    poste: "Développeur Front-End React",
-    naissance: "12/03/1998",
-    telephone: "06 12 34 56 78",
-    email: "alex.martin@email.com",
-    adresse: "12 rue des Lilas",
-    codePostal: "34000",
-    ville: "Montpellier",
-    bio: "Développeur front-end passionné par la création d’interfaces modernes, performantes et accessibles. Expérience en React, Next.js et design UI/UX. Autonome et orienté résultats.",
-    softSkills: ["Esprit d’équipe", "Communication", "Adaptabilité", "Gestion du stress"],
-    hardSkills: ["React / Next.js", "JavaScript", "TypeScript", "Tailwind CSS", "Node.js"],
-    langues: ["Français (Maternel)", "Anglais (B2)"],
-    permis: ["Permis B"],
-    diplomes: [
-      { titre: "Bachelor Développement Web", ecole: "Ecole Informatique Montpellier", annee: "2021" },
-    ],
-    experiences: [
-      { id: 1, poste: "Développeur Front-End", entreprise: "Digital Studio Agency", start: "2022", end: "2024", desc: "Conception d'interfaces complexes et optimisation des performances." },
-      { id: 2, poste: "Intégrateur Web", entreprise: "Freelance", start: "2021", end: "2022", desc: "Création de sites vitrines responsives." },
-    ],
-  };
-
   const data = {
-    ...fallback,
-    ...form,
-    experiences: form.experiences?.length ? form.experiences : fallback.experiences,
-    langues: form.langues?.length ? form.langues : fallback.langues,
-    permis: form.permis?.length ? form.permis : fallback.permis,
-    hardSkills: form.hardSkills?.length ? form.hardSkills : fallback.hardSkills,
+    prenom: form.prenom || "Alexandre",
+    nom: form.nom || "Martin",
+    poste: form.poste || "Développeur Front-End Senior",
+    naissance: form.naissance || "12/03/1995",
+    telephone: form.telephone || "06 12 34 56 78",
+    email: form.email || "alex.martin@email.com",
+    adresse: form.adresse || "12 rue des Lilas",
+    codePostal: form.codePostal || "34000",
+    ville: form.ville || "Montpellier",
+    bio: form.bio || "Développeur passionné avec plus de 5 ans d'expérience dans la création d'applications web performantes. Expert en écosystème React, j'accorde une importance capitale à l'expérience utilisateur.",
+    
+    softSkills: form.softSkills && form.softSkills.length > 0 ? form.softSkills : ["Esprit d’équipe", "Adaptabilité", "Résolution de problèmes"],
+    hardSkills: form.hardSkills && form.hardSkills.length > 0 ? form.hardSkills : ["React / Next.js", "TypeScript", "Tailwind CSS"],
+    langues: form.langues && form.langues.length > 0 ? form.langues : ["Français (Maternel)", "Anglais (C1)"],
+    permis: form.permis && form.permis.length > 0 ? form.permis : ["Permis B"],
+    hobbies: form.hobbies && form.hobbies.length > 0 ? form.hobbies : ["Photographie", "Voyages"],
+    
+    experiences: form.experiences?.length ? form.experiences : [
+      { id: 1, poste: "Lead Développeur Front-End", entreprise: "Tech Solutions Global", start: "2021", end: "Présent", desc: "Direction technique de l'équipe front-end." },
+      { id: 2, poste: "Développeur Fullstack", entreprise: "Innovation Lab", start: "2018", end: "2021", desc: "Développement d'interfaces SaaS complexes." }
+    ],
+    
+    diplomes: form.diplomes?.length ? form.diplomes : [
+      { id: 1, titre: "Master Expert en Ingénierie Informatique", ecole: "EPSI Montpellier", annee: "2018" }
+    ],
   };
 
   return (
-    <div ref={containerRef} style={styles.wrapper}>
-      {/* Wrapper de mise à l'échelle */}
+    <div ref={containerRef} style={styles.wrapper} className="cv-preview-container">
       <div style={{
         ...styles.scaleWrapper,
         transform: `scale(${scale})`,
-        marginBottom: scale < 1 ? `-${(1122 * (1 - scale))}px` : '0px' // Compense l'espace vide créé par le scale
+        marginBottom: scale < 1 ? `-${(1122 * (1 - scale))}px` : '0px'
       }}>
-        <div style={styles.a4}>
+        <div style={{ ...styles.a4, backgroundColor: theme.background }}>
           
-          {/* ================= SIDEBAR (LEFT) ================= */}
-          <div style={styles.left}>
+          <div style={{ ...styles.left, backgroundColor: theme.sidebar }}>
             <div style={styles.photoContainer}>
               {form.photo ? (
                 <img src={form.photo} alt="Profile" style={styles.photo} />
               ) : (
                 <div style={styles.photoPlaceholder}>
-                  <span style={{ fontSize: 24 }}>{data.prenom[0]}</span>
+                  <span style={{ fontSize: 32, fontWeight: 'bold' }}>{data.prenom[0]}</span>
                 </div>
               )}
             </div>
 
-            <SidebarSection title="CONTACT">
-              <p style={styles.contactItem}>📞 {data.telephone}</p>
-              <p style={styles.contactItem}>✉️ {data.email}</p>
-              <p style={styles.contactItem}>📍 {data.adresse}, {data.codePostal} {data.ville}</p>
-              <p style={styles.contactItem}>🎂 {data.naissance}</p>
+            <SidebarSection title="CONTACT" titleColor="#3b82f6">
+              <p style={styles.contactItem}><strong>📞</strong> {data.telephone}</p>
+              <p style={styles.contactItem}><strong>✉️</strong> {data.email}</p>
+              <p style={styles.contactItem}>
+                <strong>📍</strong> {data.adresse}{data.adresse && ","} {data.codePostal} {data.ville}
+              </p>
+              <p style={styles.contactItem}><strong>🎂</strong> {data.naissance}</p>
             </SidebarSection>
 
-            <SidebarSection title="LANGUES">
-              {data.langues.map((l, i) => (
-                <p key={i} style={styles.contactItem}>{l}</p>
-              ))}
+            <SidebarSection title="LANGUES" titleColor="#3b82f6">
+              {data.langues.map((l, i) => <p key={i} style={styles.contactItem}>{l}</p>)}
+            </SidebarSection>
+            
+            <SidebarSection title="PERMIS" titleColor="#3b82f6">
+              {data.permis.map((p, i) => <p key={i} style={styles.contactItem}>{p}</p>)}
             </SidebarSection>
 
-            <SidebarSection title="PERMIS">
-              {data.permis.map((p, i) => (
-                <p key={i} style={styles.contactItem}>{p}</p>
-              ))}
+            <SidebarSection title="SOFT SKILLS" titleColor="#3b82f6">
+              {data.softSkills.map((s, i) => <p key={i} style={styles.contactItem}>• {s}</p>)}
+            </SidebarSection>
+
+            <SidebarSection title="CENTRES D'INTÉRÊT" titleColor="#3b82f6">
+              {data.hobbies.map((h, i) => <p key={i} style={styles.contactItem}>• {h}</p>)}
             </SidebarSection>
           </div>
 
-          {/* ================= MAIN CONTENT (RIGHT) ================= */}
           <div style={styles.right}>
             <header style={styles.header}>
               <h1 style={styles.name}>
-                {data.prenom.toUpperCase()} <span style={{ color: '#2563eb' }}>{data.nom.toUpperCase()}</span>
+                <span style={{ color: theme.textPrimary }}>{data.prenom.toUpperCase()}</span> <span style={{ color: theme.textPrimary }}>{data.nom.toUpperCase()}</span>
               </h1>
-              <p style={styles.mainPoste}>{data.poste}</p>
+              <p style={{ ...styles.mainPoste, color: theme.textSecondary }}>{data.poste}</p>
               <div style={styles.separator}></div>
             </header>
 
             <section style={styles.section}>
-              <h2 style={styles.sectionTitle}>Profil Personnel</h2>
-              <p style={styles.bioText}>{data.bio}</p>
+              <h2 style={{ ...styles.sectionTitle, color: theme.textPrimary }}>Profil Personnel</h2>
+              <p style={{ ...styles.bioText, color: theme.textSecondary }}>{data.bio}</p>
             </section>
 
             <section style={styles.section}>
-              <h2 style={styles.sectionTitle}>Expériences Professionnelles</h2>
+              <h2 style={{ ...styles.sectionTitle, color: theme.textPrimary }}>Expériences Professionnelles</h2>
               {data.experiences.map((exp) => (
                 <div key={exp.id} style={styles.timelineItem}>
                   <div style={styles.timelineDot}></div>
                   <div style={styles.expHeader}>
-                    <strong style={styles.expPoste}>{exp.poste}</strong>
+                    <strong style={{ ...styles.expPoste, color: theme.textPrimary }}>{exp.poste}</strong>
                     <span style={styles.expDate}>{exp.start} — {exp.end}</span>
                   </div>
                   <p style={styles.expEntreprise}>{exp.entreprise}</p>
-                  {exp.desc && <p style={styles.expDesc}>{exp.desc}</p>}
+                  {exp.desc && <p style={{ ...styles.expDesc, color: theme.textSecondary }}>{exp.desc}</p>}
                 </div>
               ))}
             </section>
 
             <section style={styles.section}>
-              <h2 style={styles.sectionTitle}>Formation</h2>
+              <h2 style={{ ...styles.sectionTitle, color: theme.textPrimary }}>Formation & Diplômes</h2>
               {data.diplomes.map((d, i) => (
-                <div key={i} style={styles.educationItem}>
-                  <strong>{d.titre}</strong>
+                <div key={i} style={{marginBottom: 15}}>
+                  <strong style={{fontSize: 13, color: theme.textPrimary}}>{d.titre}</strong>
                   <p style={styles.expEntreprise}>{d.ecole} | {d.annee}</p>
                 </div>
               ))}
             </section>
 
             <section style={styles.section}>
-              <h2 style={styles.sectionTitle}>Compétences</h2>
-              <div style={{ marginBottom: 15 }}>
-                <h4 style={styles.subSkillTitle}>Expertises Techniques</h4>
-                <div style={styles.badgeContainer}>
-                  {data.hardSkills.map((s, i) => <Badge key={i}>{s}</Badge>)}
-                </div>
-              </div>
-              <div>
-                <h4 style={styles.subSkillTitle}>Soft Skills</h4>
-                <div style={styles.badgeContainer}>
-                  {data.softSkills.map((s, i) => <Badge key={i}>{s}</Badge>)}
-                </div>
+              <h2 style={{ ...styles.sectionTitle, color: theme.textPrimary }}>Compétences Techniques</h2>
+              <div style={styles.badgeContainer}>
+                {data.hardSkills.map((s, i) => <Badge key={i}>{s}</Badge>)}
               </div>
             </section>
           </div>
@@ -174,191 +169,31 @@ export default function ModernPreview({ form = {} }) {
 }
 
 const styles = {
-  wrapper: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    overflow: "hidden", // Empêche le scroll horizontal
-    background: "#e2e8f0",
-    padding: "20px 0",
-  },
-  scaleWrapper: {
-    transformOrigin: "top center",
-    width: "210mm",
-    height: "297mm",
-    transition: "transform 0.2s ease-out",
-  },
-  a4: {
-    width: "210mm",
-    height: "297mm",
-    background: "#fff",
-    display: "flex",
-    boxShadow: "0 20px 50px rgba(0,0,0,0.2)",
-    fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    color: "#1e293b",
-  },
-  /* --- Le reste de tes styles CSS reste identique --- */
-  left: {
-    width: "32%",
-    background: "#1e293b",
-    color: "#f8fafc",
-    padding: "40px 25px",
-    display: "flex",
-    flexDirection: "column",
-  },
-  photoContainer: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    marginBottom: 30,
-  },
-  photo: {
-    width: 120,
-    height: 120,
-    borderRadius: "20%",
-    border: "4px solid rgba(255,255,255,0.1)",
-    objectFit: "cover",
-  },
-  photoPlaceholder: {
-    width: 120,
-    height: 120,
-    borderRadius: "20%",
-    background: "rgba(255,255,255,0.1)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: "2px dashed rgba(255,255,255,0.3)",
-  },
-  sidebarSection: {
-    marginBottom: 30,
-  },
-  sidebarTitle: {
-    fontSize: 12,
-    fontWeight: 800,
-    letterSpacing: "1.5px",
-    borderBottom: "1px solid rgba(255,255,255,0.2)",
-    paddingBottom: 8,
-    marginBottom: 15,
-    color: "#94a3b8",
-  },
-  sidebarContent: {
-    fontSize: 12,
-    lineHeight: 1.6,
-  },
-  contactItem: {
-    marginBottom: 8,
-    opacity: 0.9,
-  },
-  right: {
-    width: "68%",
-    padding: "50px 45px",
-    display: "flex",
-    flexDirection: "column",
-  },
-  header: {
-    marginBottom: 35,
-  },
-  name: {
-    fontSize: 32,
-    fontWeight: 900,
-    margin: 0,
-    color: "#0f172a",
-    letterSpacing: "-0.5px",
-  },
-  mainPoste: {
-    fontSize: 18,
-    color: "#64748b",
-    marginTop: 5,
-    fontWeight: 500,
-  },
-  separator: {
-    width: 60,
-    height: 4,
-    background: "#2563eb",
-    marginTop: 15,
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 700,
-    textTransform: "uppercase",
-    color: "#1e293b",
-    marginBottom: 15,
-    display: "flex",
-    alignItems: "center",
-  },
-  bioText: {
-    fontSize: 13,
-    lineHeight: 1.6,
-    color: "#475569",
-    textAlign: "justify",
-  },
-  timelineItem: {
-    position: "relative",
-    paddingLeft: 20,
-    borderLeft: "2px solid #e2e8f0",
-    marginBottom: 20,
-    paddingBottom: 5,
-  },
-  timelineDot: {
-    position: "absolute",
-    left: -6,
-    top: 5,
-    width: 10,
-    height: 10,
-    borderRadius: "50%",
-    background: "#2563eb",
-  },
-  expHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "baseline",
-  },
-  expPoste: {
-    fontSize: 14,
-    color: "#0f172a",
-  },
-  expDate: {
-    fontSize: 11,
-    fontWeight: 600,
-    color: "#2563eb",
-    background: "#eff6ff",
-    padding: "2px 8px",
-    borderRadius: 10,
-  },
-  expEntreprise: {
-    fontSize: 13,
-    color: "#64748b",
-    margin: "2px 0",
-  },
-  expDesc: {
-    fontSize: 12,
-    color: "#475569",
-    marginTop: 5,
-  },
-  educationItem: {
-    marginBottom: 15,
-  },
-  subSkillTitle: {
-    fontSize: 12,
-    color: "#94a3b8",
-    marginBottom: 8,
-    textTransform: "uppercase",
-  },
-  badgeContainer: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  badge: {
-    background: "#f1f5f9",
-    color: "#334155",
-    padding: "5px 12px",
-    borderRadius: "6px",
-    fontSize: 11,
-    fontWeight: 600,
-    border: "1px solid #e2e8f0",
-  },
+  wrapper: { width: "100%", minHeight: "100vh", display: "flex", justifyContent: "center", background: "#f1f5f9", padding: "20px 0" },
+  scaleWrapper: { transformOrigin: "top center", width: "210mm", height: "297mm", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" },
+  a4: { width: "210mm", height: "297mm", display: "flex", overflow: "hidden", fontFamily: "Inter, system-ui, sans-serif" },
+  left: { width: "30%", color: "#f8fafc", padding: "40px 20px" },
+  right: { width: "70%", padding: "40px 40px" },
+  photoContainer: { marginBottom: 30, textAlign: 'center' },
+  photo: { width: 120, height: 120, borderRadius: "20px", objectFit: "cover", border: "3px solid #2563eb" },
+  photoPlaceholder: { width: 120, height: 120, borderRadius: "20px", background: "#1e293b", margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6' },
+  sidebarTitle: { fontSize: 11, fontWeight: 800, letterSpacing: "2px", marginBottom: 12, textTransform: 'uppercase' },
+  contactItem: { fontSize: 10.5, marginBottom: 8, color: "#cbd5e1" },
+  header: { marginBottom: 40 },
+  name: { fontSize: 32, fontWeight: 800, letterSpacing: "-1px", margin: 0, lineHeight: 1 },
+  mainPoste: { fontSize: 18, fontWeight: 500, marginTop: 8 },
+  separator: { width: 45, height: 4, background: "#2563eb", marginTop: 12, borderRadius: 10 },
+  section: { marginBottom: 25 },
+  sectionTitle: { fontSize: 13, fontWeight: 800, textTransform: 'uppercase', borderBottom: "2px solid #f1f5f9", paddingBottom: 4, marginBottom: 15 },
+  bioText: { fontSize: 11.5, lineHeight: 1.5, textAlign: 'justify' },
+  timelineItem: { position: "relative", paddingLeft: 18, borderLeft: "2px solid #f1f5f9", marginBottom: 15 },
+  timelineDot: { position: "absolute", left: -6, top: 4, width: 10, height: 10, borderRadius: "50%", background: "#2563eb" },
+  expHeader: { display: "flex", justifyContent: "space-between", alignItems: 'center' },
+  expPoste: { fontSize: 13 },
+  expDate: { fontSize: 9.5, fontWeight: 700, color: "#2563eb", background: '#f0f7ff', padding: '2px 8px', borderRadius: '4px' },
+  expEntreprise: { fontSize: 12, color: "#64748b", margin: '2px 0' },
+  expDesc: { fontSize: 11, marginTop: 4, lineHeight: 1.4 },
+  badgeContainer: { display: "flex", flexWrap: "wrap", gap: 6 },
+  badge: { background: "#f8fafc", color: "#334155", padding: "4px 10px", borderRadius: "6px", fontSize: 10, fontWeight: 600, border: "1px solid #e2e8f0" },
+  sidebarSection: { marginBottom: 30 }
 };
