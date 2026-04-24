@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Formise - Formations IA et Digitales",
+  title: "Formatiz - Formations IA et Digitales",
   description: "Que vous soyez entrepreneur, chercheur d'emploi ou particulier, découvrez nos solutions pour vous faire gagner du temps et de l'argent grâce à nos logiciels gratuits et apprenez à maitriser l'IA comme un véritable professionnel.",
 };
 

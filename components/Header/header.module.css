@@ -49,7 +49,7 @@
   object-fit: contain;
   height: auto;
   width: auto;
-  max-width: 140px;
+  max-width: 300px;
 }
 
 /* 📱 MOBILE */
@@ -64,10 +64,11 @@
 
   .franceTravail {
     max-width: 120px;
+    width: 100%;
   }
 
   .logo {
-    max-width: 110px;
+    max-width: 210px;
   }
 
   .center {
@@ -82,3 +83,4 @@
     max-width: 90px;
   }
 }
+

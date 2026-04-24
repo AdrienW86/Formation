@@ -11,9 +11,9 @@ export default function Header() {
           <Image
             className={styles.logo}
             src="/logo.png"
-            alt="Formise logo"
-            width={160}
-            height={60}
+            alt="Formatiz logo"
+            width={340}
+            height={190}
             priority
           />
         </Link>
@@ -21,12 +21,13 @@ export default function Header() {
       <div className={styles.center}>
         <p className={styles.p}>En partenariat avec</p>
         <Image
-          src="/france-travail.svg"
-          className={styles.franceTravail}
-          alt="France Travail"
-          width={140}
-          height={50}
-        />
+  src="/france-travail.svg"
+  className={styles.franceTravail}
+  alt="France Travail"
+  width={140}
+  height={50}
+  style={{ width: 'auto', height: 'auto' }} // Et ici aussi
+/>
       </div>
       <div className={styles.right}>
         <Hamburger />
