@@ -16,9 +16,9 @@ export default function Footer() {
           <Link href="/">
             <Image
               className={styles.logo}
-              src="/logo2.png"
+              src="/logo3.png"
               alt="Formise logo"
-              width={160}
+              width={260}
               height={160}
               priority
             />
